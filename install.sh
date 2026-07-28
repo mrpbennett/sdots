@@ -19,11 +19,6 @@ gum_input_into() {
   trap - INT
   set -e
 
-  if ((status != 0)); then
-    target=""
-    finish_from_interrupt
-  fi
-
   target="$value"
 }
 
@@ -210,6 +205,3 @@ install_gum
 setup_ssh_public_key
 install_tailscale
 install_oh_my_zsh
-
-echo "Done. Log out and back in before using Docker without sudo."
-source ~/.zshrc
