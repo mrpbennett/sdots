@@ -6,6 +6,27 @@ set -euo pipefail
 REPO_DIR="$HOME/.local/share/sdots"
 KEY=""
 
+# Helper functions...
+gum_input_into() {
+  local -n target="$1"
+  local value status
+  shift
+
+  set +e
+  trap : INT
+  value="$(gum input "$@")"
+  status=$?
+  trap - INT
+  set -e
+
+  if ((status != 0)); then
+    target=""
+    finish_from_interrupt
+  fi
+
+  target="$value"
+}
+
 cat <<'EOF'
 
 ________  ________  ________  _________  ________
