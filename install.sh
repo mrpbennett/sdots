@@ -159,9 +159,11 @@ setup_ssh_public_key() {
   echo
 }
 
-echo "✓ Installing TailScale..."
-curl -fsSL https://tailscale.com/install.sh | sh
-sudo systemctl enable --now tailscaled
+install_tailscale() {
+  echo "✓ Installing TailScale..."
+  curl -fsSL https://tailscale.com/install.sh | sh
+  sudo systemctl enable --now tailscaled
+}
 
 # Clone Oh My Zsh and its autosuggestions/syntax-highlighting plugins, then
 # set zsh as the default shell for the current user.
@@ -184,6 +186,7 @@ set_up_mise_and_stow
 install_tpm
 install_gum
 setup_ssh_public_key
+install_tailscale
 install_oh_my_zsh
 
 echo "Done. Log out and back in before using Docker without sudo."
