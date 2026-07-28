@@ -12,6 +12,7 @@ lazygit = "latest"
 lazydocker = "latest"
 btop = "latest"
 hunk = "latest"
+herdr = "latest"
 
 # .
 eza = "latest"
@@ -23,6 +24,7 @@ fzf = "latest"
 fd = "latest"
 bat = "latest"
 atuin = "latest"
+worktrunk = "latest"
 
 # ai
 opencode = "latest"

@@ -4,6 +4,7 @@ set -euo pipefail
 # Directory where the dotfiles repo will (or already does) live.
 # Also acts as fallback when the script is run outside a git checkout.
 REPO_DIR="$HOME/.local/share/sdots"
+KEY=""
 
 cat <<'EOF'
 
@@ -37,10 +38,7 @@ sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
 # Install Docker from the distro package manager, then enable the daemon and
 # add the current user to the docker group.
 install_docker() {
-  local target_user
-
-  echo "Installing Docker..."
-
+  local target_use
   if command -v docker &>/dev/null && systemctl cat docker.service &>/dev/null; then
     :
   elif [ -f /etc/arch-release ]; then
@@ -56,7 +54,7 @@ install_docker() {
     exit 1
   fi
 
-  section "Enabling Docker..."
+  echo "Enabling Docker..."
   sudo systemctl enable --now docker.service
   sudo groupadd -f docker
   target_user="${SUDO_USER:-${USER:-$(id -un)}}"
@@ -117,8 +115,54 @@ install_oh_my_zsh() {
   sudo chsh -s "$(which zsh)" "$(id -un)"
 }
 
+install_gum() {
+  sudo mkdir -p /etc/apt/keyrings
+  curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+  sudo apt update && sudo apt install gum
+}
+
+install_ssh_key() {
+  local ssh_key="$1"
+
+  [[ -n $ssh_key ]] || return 0
+
+  mkdir -p "$HOME/.ssh" || return 1
+  chmod 700 "$HOME/.ssh" || return 1
+  touch "$HOME/.ssh/authorized_keys" || return 1
+  chmod 600 "$HOME/.ssh/authorized_keys" || return 1
+
+  if grep -qxF "$ssh_key" "$HOME/.ssh/authorized_keys"; then
+    return
+  else
+    echo "$ssh_key" >>"$HOME/.ssh/authorized_keys" || return 1
+  fi
+}
+
+setup_ssh_public_key() {
+  local ssh_key="$KEY"
+
+  if [[ -z $ssh_key ]]; then
+
+  if ! ssh_key="$(gum input \
+    --placeholder "ssh-ed25519 AAAAC3..." \
+    --prompt "SSH key:")" || exit 1
+  fi
+
+  [[ -n $ssh_key ]] || {
+    return
+  }
+
+  install_ssh_key "$ssh_key" || return 1
+
+  echo "✓ SSH"
+  echo
+}
+
 install_docker
 set_up_mise_and_stow
 install_tpm
 install_tailscale
 install_oh_my_zsh
+install_gum
+setup_ssh_public_key

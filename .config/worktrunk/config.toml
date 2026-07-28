@@ -1,0 +1,4 @@
+worktree-path = "{{repo_path}}/.worktrees/{{branch | codename(2) }}"
+[list]
+summary = true
+columns = ["branch", "status", "ci", "path"]
