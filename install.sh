@@ -4,6 +4,7 @@ set -euo pipefail
 # Directory where the dotfiles repo will (or already does) live.
 # Also acts as fallback when the script is run outside a git checkout.
 REPO_DIR="$HOME/.local/share/sdots"
+KEY=""
 
 cat <<'EOF'
 
@@ -94,7 +95,7 @@ install_tpm() {
   "$MISE_BIN" exec -- "$TPM_DIR/bin/install_plugins"
 }
 
-# Install Charm's gum (TUI toolkit) from the distro package manager or
+# Install Charm's gum (TUI toolkitt) from the distro package manager or
 # third-party repo, depending on the platform.
 install_gum() {
   command -v gum &>/dev/null && return
