@@ -37,14 +37,32 @@ sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
 # Install Docker from the distro package manager, then enable the daemon and
 # add the current user to the docker group.
 install_docker() {
+  local target_user
 
   echo "Installing Docker..."
-  sudo apt-get install -y docker.io docker-compose-v2
 
-  sudo systemctl enable --now docker nginx
+  if command -v docker &>/dev/null && systemctl cat docker.service &>/dev/null; then
+    :
+  elif [ -f /etc/arch-release ]; then
+    sudo pacman -S --needed --noconfirm docker
+  elif [ -f /etc/debian_version ]; then
+    sudo apt-get update
+    sudo apt-get install -y docker.io
+  elif [ -f /etc/fedora-release ]; then
+    sudo dnf install -y moby-engine
+  else
+    echo "Error: This OS is not supported by the installer."
+    echo "Install Docker manually, then run this installer again."
+    exit 1
+  fi
+
+  section "Enabling Docker..."
+  sudo systemctl enable --now docker.service
   sudo groupadd -f docker
-  sudo usermod -aG docker "$(id -un)"
+  target_user="${SUDO_USER:-${USER:-$(id -un)}}"
+  sudo usermod -aG docker "$target_user"
 
+  echo
   echo "✓ Docker"
 }
 
