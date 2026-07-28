@@ -12,7 +12,6 @@ lazygit = "latest"
 lazydocker = "latest"
 btop = "latest"
 hunk = "latest"
-herdr = "latest"
 
 # .
 eza = "latest"
