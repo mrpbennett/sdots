@@ -6,6 +6,24 @@ set -euo pipefail
 REPO_DIR="$HOME/.local/share/sdots"
 KEY=""
 
+wait_for_apt() {
+  local waited=0
+  while fuser /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/cache/apt/archives/lock &>/dev/null; do
+    if ((waited >= 120)); then
+      echo "Timed out waiting for apt lock (process $(fuser /var/lib/dpkg/lock-frontend 2>/dev/null))"
+      return 1
+    fi
+    sleep 2
+    ((waited += 2))
+  done
+}
+
+finish_from_interrupt() {
+  echo
+  echo "Interrupted. Exiting."
+  exit 1
+}
+
 # Helper functions...
 gum_input_into() {
   local -n target="$1"
@@ -44,9 +62,11 @@ if [[ ! -d $DOTFILES_DIR/.git ]]; then
 fi
 
 # Refresh package index before installing anything.
+wait_for_apt
 sudo apt-get update
 
 echo "✓ Installing apt packages, including Docker & Nginx..."
+wait_for_apt
 sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
   build-essential curl git stow nginx zsh
 
@@ -62,7 +82,9 @@ install_docker() {
   elif [ -f /etc/arch-release ]; then
     sudo pacman -S --needed --noconfirm docker
   elif [ -f /etc/debian_version ]; then
+    wait_for_apt
     sudo apt-get update
+    wait_for_apt
     sudo apt-get install -y docker.io
   elif [ -f /etc/fedora-release ]; then
     sudo dnf install -y moby-engine
@@ -126,7 +148,9 @@ install_gum() {
     curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
     echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" |
       sudo tee /etc/apt/sources.list.d/charm.list >/dev/null
+    wait_for_apt
     sudo apt-get update
+    wait_for_apt
     sudo apt-get install -y gum
   elif [ -f /etc/fedora-release ]; then
     sudo dnf install -y gum
