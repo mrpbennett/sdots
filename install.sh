@@ -21,6 +21,7 @@ EOF
 # Resolve the dotfiles directory: prefer the repo beside this script, fall back
 # to REPO_DIR, and clone from GitHub if neither exists yet.
 DOTFILES_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$REPO_DIR}")" 2>/dev/null && pwd || true)
+
 if [[ ! -d $DOTFILES_DIR/.git ]]; then
   DOTFILES_DIR=$REPO_DIR
   [[ -d $DOTFILES_DIR/.git ]] || git clone --depth 1 https://github.com/mrpbennett/sdots.git "$DOTFILES_DIR"
@@ -36,34 +37,14 @@ sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
 # Install Docker from the distro package manager, then enable the daemon and
 # add the current user to the docker group.
 install_docker() {
-  local target_user
 
   echo "Installing Docker..."
+  sudo apt-get install -y docker.io docker-compose-v2
 
-  if command -v docker &>/dev/null && systemctl cat docker.service &>/dev/null; then
-    :
-  elif [ -f /etc/arch-release ]; then
-    sudo pacman -S --needed --noconfirm docker
-  elif [ -f /etc/debian_version ]; then
-    wait_for_apt
-    sudo apt-get update
-    wait_for_apt
-    sudo apt-get install -y docker.io
-  elif [ -f /etc/fedora-release ]; then
-    sudo dnf install -y moby-engine
-  else
-    echo "Error: This OS is not supported by the installer."
-    echo "Install Docker manually, then run this installer again."
-    exit 1
-  fi
-
-  echo "Enabling Docker..."
-  sudo systemctl enable --now docker.service
+  sudo systemctl enable --now docker nginx
   sudo groupadd -f docker
-  target_user="${SUDO_USER:-${USER:-$(id -un)}}"
-  sudo usermod -aG docker "$target_user"
+  sudo usermod -aG docker "$(id -un)"
 
-  echo
   echo "✓ Docker"
 }
 
