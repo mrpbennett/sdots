@@ -38,7 +38,7 @@ sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
 install_docker() {
   local target_user
 
-  section "Installing Docker..."
+  echo "Installing Docker..."
 
   if command -v docker &>/dev/null && systemctl cat docker.service &>/dev/null; then
     :
@@ -55,7 +55,7 @@ install_docker() {
     exit 1
   fi
 
-  section "Enabling Docker..."
+  echo "Enabling Docker..."
   sudo systemctl enable --now docker.service
   sudo groupadd -f docker
   target_user="${SUDO_USER:-${USER:-$(id -un)}}"
@@ -99,7 +99,7 @@ install_tpm() {
 install_gum() {
   command -v gum &>/dev/null && return
 
-  section "Installing gum..."
+  echo "Installing gum..."
 
   if [ -f /etc/arch-release ]; then
     sudo pacman -S --needed --noconfirm gum
