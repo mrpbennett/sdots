@@ -143,10 +143,11 @@ setup_ssh_public_key() {
   local ssh_key="$KEY"
 
   if [[ -z $ssh_key ]]; then
-
-  if ! ssh_key="$(gum input \
-    --placeholder "ssh-ed25519 AAAAC3..." \
-    --prompt "SSH key:")" || exit 1
+    if ! ssh_key="$(gum input \
+      --placeholder "ssh-ed25519 AAAAC3..." \
+      --prompt "SSH key:")"; then
+      return 1
+    fi
   fi
 
   [[ -n $ssh_key ]] || {
