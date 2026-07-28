@@ -4,41 +4,6 @@ set -euo pipefail
 # Directory where the dotfiles repo will (or already does) live.
 # Also acts as fallback when the script is run outside a git checkout.
 REPO_DIR="$HOME/.local/share/sdots"
-KEY=""
-
-wait_for_apt() {
-  local waited=0
-  while fuser /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/cache/apt/archives/lock &>/dev/null; do
-    if ((waited >= 120)); then
-      echo "Timed out waiting for apt lock (process $(fuser /var/lib/dpkg/lock-frontend 2>/dev/null))"
-      return 1
-    fi
-    sleep 2
-    ((waited += 2))
-  done
-}
-
-finish_from_interrupt() {
-  echo
-  echo "Interrupted. Exiting."
-  exit 1
-}
-
-# Helper functions...
-gum_input_into() {
-  local -n target="$1"
-  local value status
-  shift
-
-  set +e
-  trap : INT
-  value="$(gum input "$@")"
-  status=$?
-  trap - INT
-  set -e
-
-  target="$value"
-}
 
 cat <<'EOF'
 
@@ -62,11 +27,9 @@ if [[ ! -d $DOTFILES_DIR/.git ]]; then
 fi
 
 # Refresh package index before installing anything.
-wait_for_apt
 sudo apt-get update
 
-echo "✓ Installing apt packages, including Docker & Nginx..."
-wait_for_apt
+echo "✓ Installing apt packages..."
 sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
   build-essential curl git stow nginx zsh
 
@@ -133,73 +96,6 @@ install_tpm() {
   "$MISE_BIN" exec -- "$TPM_DIR/bin/install_plugins"
 }
 
-# Install Charm's gum (TUI toolkitt) from the distro package manager or
-# third-party repo, depending on the platform.
-install_gum() {
-  command -v gum &>/dev/null && return
-
-  echo "Installing gum..."
-
-  if [ -f /etc/arch-release ]; then
-    sudo pacman -S --needed --noconfirm gum
-  elif [ -f /etc/debian_version ]; then
-    # gum isn't in the Debian/Ubuntu repos; add Charm's apt repo first.
-    sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
-    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" |
-      sudo tee /etc/apt/sources.list.d/charm.list >/dev/null
-    wait_for_apt
-    sudo apt-get update
-    wait_for_apt
-    sudo apt-get install -y gum
-  elif [ -f /etc/fedora-release ]; then
-    sudo dnf install -y gum
-  else
-    echo "Error: This OS is not supported by the installer."
-    echo "Install gum manually (https://github.com/charmbracelet/gum), then run this installer again."
-    exit 1
-  fi
-
-  echo
-  echo "✓ Gum"
-}
-
-# Appends a public SSH key to ~/.ssh/authorized_keys if not already present.
-install_ssh_key() {
-  local ssh_key="$1"
-
-  [[ -n $ssh_key ]] || return 0
-
-  mkdir -p "$HOME/.ssh" || return 1
-  chmod 700 "$HOME/.ssh" || return 1
-  touch "$HOME/.ssh/authorized_keys" || return 1
-  chmod 600 "$HOME/.ssh/authorized_keys" || return 1
-
-  if grep -qxF "$ssh_key" "$HOME/.ssh/authorized_keys"; then
-    return
-  else
-    echo "$ssh_key" >>"$HOME/.ssh/authorized_keys" || return 1
-  fi
-}
-
-# Prompt for an SSH public key (unless $KEY is set) and install it to
-# authorized_keys for password-less login.
-setup_ssh_public_key() {
-  local ssh_key="$KEY"
-
-  if [[ -z $ssh_key ]]; then
-    gum_input_into ssh_key --placeholder "ssh-ed25519 AAAAC3..." --prompt "SSH key: " || return 1
-  fi
-  [[ -n $ssh_key ]] || {
-    return
-  }
-
-  install_ssh_key "$ssh_key" || return 1
-
-  echo "✓ SSH"
-  echo
-}
-
 install_tailscale() {
   echo "✓ Installing TailScale..."
   curl -fsSL https://tailscale.com/install.sh | sh
@@ -225,7 +121,5 @@ install_oh_my_zsh() {
 install_docker
 set_up_mise_and_stow
 install_tpm
-install_gum
-setup_ssh_public_key
 install_tailscale
 install_oh_my_zsh
