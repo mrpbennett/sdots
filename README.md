@@ -1,14 +1,8 @@
-```
-________  ________  ________  _________  ________
-|\   ____\|\   ___ \|\   __  \|\___   ___\\   ____\
-\ \  \___|\ \  \_|\ \ \  \|\  \|___ \  \_\ \  \___|_
- \ \_____  \ \  \ \\ \ \  \\\  \   \ \  \ \ \_____  \
-  \|____|\  \ \  \_\\ \ \  \\\  \   \ \  \ \|____|\  \
-    ____\_\  \ \_______\ \_______\   \ \__\  ____\_\  \
-   |\_________\|_______|\|_______|    \|__| |\_________\
-   \|_________|                             \|_________|
-```
-
+<h1 align="center">
+    <img src="sdots-imgs/mascot.png" width="350" alt="Dot Mascot"/>
+    <br/>
+    <sub>sdots</sub>
+</h1>
 <p align="center">
     <img alt="GNU Stow" src="https://img.shields.io/badge/managed_with-GNU_Stow-4CAF50?style=flat-square&logo=gnu&logoColor=white"/>
     <img alt="Ubuntu" src="https://img.shields.io/badge/platform-ubuntu-000000?style=flat-square&logo=ubuntu&logoColor=white"/>
