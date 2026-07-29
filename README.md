@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="sdots-imgs/mascot.png" width="350" alt="Dot Mascot"/>
+    <img src="sdot-imgs/mascot.png" width="350" alt="Dot Mascot"/>
     <br/>
     <sub>sdots</sub>
 </h1>
