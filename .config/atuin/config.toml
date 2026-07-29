@@ -9,6 +9,10 @@ update_check = true
 search_mode = "daemon-fuzzy"
 enter_accept = true
 
+[daemon]
+enabled = true
+autostart = true
+
 [sync]
 records = false
 
