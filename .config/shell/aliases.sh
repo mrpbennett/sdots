@@ -51,6 +51,7 @@ alias e="exit"  # a swifter exit
 alias v="nvim"  # quicker nvim
 alias bt="btop" # better activity monitor
 alias t='tmux attach || tmux new -s Work'
+alias h="herdr"
 alias cat="bat" # a better cat
 alias d="docker"
 alias lzg='lazygit'

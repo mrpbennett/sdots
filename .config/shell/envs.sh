@@ -4,4 +4,5 @@ export PATH="$PATH:$HOME/.local/bin:$HOME/.atuin/bin"
 export SUDO_EDITOR="$EDITOR"
 export BAT_THEME=ansi
 export MANROFFOPT="-c"
+export GITHUB_TOKEN="$(gh auth token)"
 export ZSH="$HOME/.oh-my-zsh"
