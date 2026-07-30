@@ -1,40 +1,35 @@
-data_dir = "~/.local/share/atuin"
 db_path = "~/.history.db"
 key_path = "~/.key"
 session_path = "~/.session"
 dialect = "uk"
-timezone = "local"
 auto_sync = true
 update_check = true
+sync_address = "https://api.atuin.sh"
+sync_frequency = "1h"
 search_mode = "daemon-fuzzy"
+filter_mode = "host"
+style = "full"
 enter_accept = true
-
-[daemon]
-enabled = true
-autostart = true
-
-[sync]
-records = false
-
-[theme]
-name = "marine"
-enabled = true
-autostart = true
-
-[search]
-filters = [
-  "global",
-  "host",
-  "session",
-  "session-preload",
-  "workspace",
-  "directory",
-]
+keymap_mode = "vim-normal"
+keymap_cursor = { vim_insert = "blink-bar", vim_normal = "steady-block" }
 
 [tmux]
 enabled = true
 width = "80%"
 height = "60%"
+
+[daemon]
+enabled = true
+autostart = true
+
+[theme]
+name = "catppuccin-macchiato-blue"
+
+[ui]
+columns = ["duration", "time", "host", "command"]
+
+[sync]
+records = false
 
 [ai]
 enabled = false
