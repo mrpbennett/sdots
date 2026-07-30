@@ -1,0 +1,4 @@
+git_protocol: ssh
+editor: nvim
+pager: hunk pager
+spinner: enabled
