@@ -45,7 +45,7 @@ install_docker() {
     sudo pacman -S --needed --noconfirm docker
   elif [ -f /etc/debian_version ]; then
     sudo apt-get update
-    sudo apt-get install -y docker.io
+    sudo apt-get install -y docker.io docker-compose-v2
   elif [ -f /etc/fedora-release ]; then
     sudo dnf install -y moby-engine
   else

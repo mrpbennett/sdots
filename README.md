@@ -1,8 +1,5 @@
-<h1 align="center">
-    <img src="sdot-imgs/mascot.png" width="250" alt="Dot Mascot"/>
-    <br/>
-    <sub>sdots</sub>
-</h1>
+<h1>SDOTS...</h1>
+
 <p align="center">
     <img alt="GNU Stow" src="https://img.shields.io/badge/managed_with-GNU_Stow-4CAF50?style=flat-square&logo=gnu&logoColor=white"/>
     <img alt="Ubuntu" src="https://img.shields.io/badge/platform-ubuntu-000000?style=flat-square&logo=ubuntu&logoColor=white"/>
@@ -15,7 +12,7 @@ dotfiles for Ubuntu Server managed with GNU Stow and mise.
 ## What it sets up
 
 - **Shell**: Zsh with starship prompt, fzf, eza, zoxide, tmux, bat, ripgrep, fd, jq, curlie
-- **Editors**: Neovim
+- **Editors**: Lazyvim
 - **Agents**: opencode, claude-code
 - **Dev tools**: mise, Docker, Docker Compose, nginx, GitHub CLI (`gh`), lazygit, lazydocker, atuin, btop, yazi, Sesh
 - **Languages**: Node.js (LTS), Python (latest), Go (latest)
