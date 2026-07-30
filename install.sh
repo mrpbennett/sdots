@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+TAILSCALE_AUTH_KEY=""
+SSH_KEY=""
+
 # Directory where the dotfiles repo will (or already does) live.
 # Also acts as fallback when the script is run outside a git checkout.
 REPO_DIR="$HOME/.local/share/sdots"
-KEY=""
 
 cat <<'EOF'
 
@@ -95,8 +97,25 @@ install_tpm() {
 
 install_tailscale() {
   echo "✓ Installing TailScale..."
+  local tailscale_auth_key="$TAILSCALE_AUTH_KEY"
+
   curl -fsSL https://tailscale.com/install.sh | sh
   sudo systemctl enable --now tailscaled
+
+  echo "Grab a new auth key from the 'generate install script' block on:"
+  echo "https://login.tailscale.com/admin/machines/new-linux"
+  echo
+
+  if [[ -z $tailscale_auth_key ]]; then
+    if ! tailscale_auth_key="$(gum input \
+      --placeholder "tskey-auth-kMyk..." \
+      --prompt "TailScale auth key:")"; then
+      return 1
+    fi
+  fi
+
+  sudo tailscale up --auth-key=$tailscale_auth_key
+  sudo tailscale set --operator=$USER
 }
 
 # Clone Oh My Zsh and its autosuggestions/syntax-highlighting plugins, then
@@ -140,7 +159,7 @@ install_ssh_key() {
 }
 
 setup_ssh_public_key() {
-  local ssh_key="$KEY"
+  local ssh_key="$SSH_KEY"
 
   if [[ -z $ssh_key ]]; then
     if ! ssh_key="$(gum input \
