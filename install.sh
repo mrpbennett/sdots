@@ -95,29 +95,6 @@ install_tpm() {
   "$MISE_BIN" exec -- "$TPM_DIR/bin/install_plugins"
 }
 
-install_tailscale() {
-  echo "✓ Installing TailScale..."
-  local tailscale_auth_key="$TAILSCALE_AUTH_KEY"
-
-  curl -fsSL https://tailscale.com/install.sh | sh
-  sudo systemctl enable --now tailscaled
-
-  echo "Grab a new auth key from the 'generate install script' block on:"
-  echo "https://login.tailscale.com/admin/machines/new-linux"
-  echo
-
-  if [[ -z $tailscale_auth_key ]]; then
-    if ! tailscale_auth_key="$(gum input \
-      --placeholder "tskey-auth-kMyk..." \
-      --prompt "TailScale auth key:")"; then
-      return 1
-    fi
-  fi
-
-  sudo tailscale up --auth-key=$tailscale_auth_key
-  sudo tailscale set --operator=$USER
-}
-
 # Clone Oh My Zsh and its autosuggestions/syntax-highlighting plugins, then
 # set zsh as the default shell for the current user.
 install_oh_my_zsh() {
@@ -139,6 +116,29 @@ install_gum() {
   curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
   echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
   sudo apt update && sudo apt install gum
+}
+
+install_tailscale() {
+  echo "✓ Installing TailScale..."
+  local tailscale_auth_key="$TAILSCALE_AUTH_KEY"
+
+  curl -fsSL https://tailscale.com/install.sh | sh
+  sudo systemctl enable --now tailscaled
+
+  echo "Grab a new auth key from the 'generate install script' block on:"
+  echo "https://login.tailscale.com/admin/machines/new-linux"
+  echo
+
+  if [[ -z $tailscale_auth_key ]]; then
+    if ! tailscale_auth_key="$(gum input \
+      --placeholder "tskey-auth-kMyk..." \
+      --prompt "TailScale auth key:")"; then
+      return 1
+    fi
+  fi
+
+  sudo tailscale up --auth-key=$tailscale_auth_key
+  sudo tailscale set --operator=$USER
 }
 
 install_ssh_key() {
@@ -182,7 +182,7 @@ setup_ssh_public_key() {
 install_docker
 set_up_mise_and_stow
 install_tpm
-install_tailscale
 install_oh_my_zsh
 install_gum
+install_tailscale
 setup_ssh_public_key
