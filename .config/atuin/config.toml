@@ -8,7 +8,6 @@ sync_address = "https://api.atuin.sh"
 sync_frequency = "1h"
 search_mode = "daemon-fuzzy"
 filter_mode = "host"
-style = "full"
 enter_accept = true
 keymap_mode = "vim-normal"
 keymap_cursor = { vim_insert = "blink-bar", vim_normal = "steady-block" }
