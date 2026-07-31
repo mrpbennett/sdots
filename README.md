@@ -9,13 +9,23 @@ A terminal setup for Ubuntu inspired by [Omaterm](https://github.com/omacom-io/o
 
 ## What it sets up
 
-- **Shell**: Zsh with starship prompt, fzf, eza, zoxide, tmux, bat, ripgrep, fd, jq, curlie
-- **Editors**: Lazyvim
-- **Agents**: opencode, claude-code
-- **Dev tools**: mise, Docker, Docker Compose, nginx, GitHub CLI (`gh`), lazygit, lazydocker, atuin, btop, yazi, Sesh
-- **Languages**: Node.js (LTS), Python (latest), Go (latest)
+One command, three delivery channels — **apt** for the OS layer, **mise** for the version-pinned toolbelt, and a little **glue** (Tailscale, SSH key, Oh My Zsh, TPM, gum) for what package managers won't do. Unpacked, it looks like this:
 
-Core system packages (Docker, Docker Compose, nginx, build-essential, git, curl, stow) are installed through apt. The rest is installed through mise after the OS packages are in place.
+```
+┌──────────────────────────────────────────────────────────────┐
+│  TERMINAL     zsh + oh-my-zsh · starship · tmux · fzf        │
+│  TERMINAL     zoxide · atuin · sesh                          │
+│  FILES        eza · bat · fd · ripgrep · yazi                │
+│  SYSTEM       btop · duf · glow · tlrc · jq · yq · xh        │
+│  GIT          lazygit · gh · hunk · worktrunk                │
+│  DOCKER       docker · compose · lazydocker                  │
+│  AGENTS       opencode · claude-code                         │
+│  EDITOR       neovim · lazyvim                               │
+│  RUNTIMES     node (lts) · python · go · rust                │
+└──────────────────────────────────────────────────────────────┘
+```
+
+Everything in the box is declared in `~/.config/mise/config.toml` and kept current with a single `mise upgrade`; the apt layer runs on `unattended-upgrades` so security patches land by themselves. Worth knowing before you click around: `hunk` stages line-level git changes, `worktrunk` spins up git worktrees for parallel agents, `sesh` is the tmux session picker behind `prefix + T`, and `duf`/`btop`/`tlrc`/`glow` are the pretty versions of `df`, `top`, `man`, and markdown-`cat`.
 
 ## Install
 
