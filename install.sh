@@ -40,7 +40,7 @@ sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
 # Install Docker from the distro package manager, then enable the daemon and
 # add the current user to the docker group.
 install_docker() {
-  local target_use
+  local target_user
   if command -v docker &>/dev/null && systemctl cat docker.service &>/dev/null; then
     :
   elif [ -f /etc/arch-release ]; then
@@ -79,7 +79,6 @@ set_up_mise_and_stow() {
 
   echo "✓ Running Stow for symlinks..."
   stow --no-folding --restow --dir "$DOTFILES_DIR" --target "$HOME" .
-  ln -snf "$HOME/.config/shell/inputrc.sh" "$HOME/.inputrc"
 
   echo "✓ Installing packages via mise..."
   "$MISE_BIN" trust -y "$HOME/.config/mise/config.toml"

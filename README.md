@@ -5,7 +5,7 @@
     <img alt="LazyVim" src="https://img.shields.io/badge/editor-LazyVim-7C3AED?style=flat-square"/>
 </p>
 
-dotfiles for Ubuntu Server managed with GNU Stow and mise.
+A terminal setup for Ubuntu inspired by [Omaterm](https://github.com/omacom-io/omaterm) and [Omarchy](https://omarchy.org/).
 
 ## What it sets up
 
