@@ -31,11 +31,20 @@ if [[ ! -d $DOTFILES_DIR/.git ]]; then
 fi
 
 # Refresh package index before installing anything.
-sudo apt-get update
+install_apt_packages() {
 
-echo "✓ Installing apt packages..."
-sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  build-essential curl git stow nginx zsh
+  sudo apt-get update
+
+  echo "✓ Installing apt packages..."
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    build-essential curl git stow nginx zsh
+
+  # Setup automatic security upgrades
+  if [ -f /etc/debian_version ]; then
+    sudo apt install -y unattended-upgrades
+    sudo dpkg-reconfigure -f noninteractive unattended-upgrades
+  fi
+}
 
 # Install Docker from the distro package manager, then enable the daemon and
 # add the current user to the docker group.
@@ -178,6 +187,7 @@ setup_ssh_public_key() {
   echo
 }
 
+install_apt_packages
 install_docker
 set_up_mise_and_stow
 install_tpm

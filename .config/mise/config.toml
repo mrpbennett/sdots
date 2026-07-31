@@ -2,6 +2,7 @@
 atuin = "latest"
 bat = "latest"
 btop = "latest"
+buf = "latest"
 claude-code = "latest"
 eza = "latest"
 fd = "latest"
