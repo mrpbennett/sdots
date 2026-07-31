@@ -1,5 +1,6 @@
 ^/install\.sh$
 ^/README\.md$
+^/CHANGELOG\.md$
 ^/LICENSE$
 ^/\.git
 ^/\.gitignore$
