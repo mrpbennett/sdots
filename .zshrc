@@ -31,6 +31,7 @@ zle -N zle-line-init
 
 source "$HOME/.config/shell/all.sh"
 
-if [[ -z $TMUX ]]; then
-  t
-fi
+# uncomment if want to use tmux only
+# if [[ -z $TMUX ]]; then
+#   t
+# fi
