@@ -32,10 +32,10 @@ reload_config = "prefix+q"
 help = "prefix+?"
 detach = "prefix+d"
 
-# Copy mode
+# copy mode
 copy_mode = "prefix+["
 
-# Panes
+# panes
 split_vertical = ["prefix+|", "prefix+h", "alt+enter"]
 split_horizontal = ["prefix+minus", "prefix+v", "alt+shift+enter"]
 close_pane = ["alt+esc"]
@@ -48,7 +48,7 @@ focus_pane_right = ["ctrl+alt+l", "ctrl+alt+right"]
 
 rename_pane = "prefix+shift+o"
 
-# Windows -> tabs
+# windows -> tabs
 new_tab = "prefix+c"
 rename_tab = "prefix+r"
 close_tab = "prefix+x"
@@ -57,7 +57,7 @@ previous_tab = ["prefix+p", "alt+left"]
 next_tab = ["prefix+n", "alt+right"]
 #resize_mode = "prefix+alt+r"
 
-# Sessions -> workspaces
+# sessions -> workspaces
 new_workspace = "prefix+shift+c"
 rename_workspace = "prefix+shift+r"
 close_workspace = "prefix+shift+k"
@@ -66,7 +66,7 @@ next_workspace = ["prefix+shift+n", "alt+down"]
 
 
 ###########################################
-# Open useful TUI apps right within Herdr
+# open useful tui apps right within herdr
 ###########################################
 
 # opens a floating pane
