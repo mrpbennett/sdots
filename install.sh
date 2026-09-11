@@ -6,7 +6,7 @@ SSH_KEY=""
 
 # Directory where the dotfiles repo will (or already does) live.
 # Also acts as fallback when the script is run outside a git checkout.
-REPO_DIR="$HOME/.local/share/sdots"
+REPO_DIR="$HOME/.dotfiles"
 
 cat <<'EOF'
 
