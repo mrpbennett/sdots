@@ -2,7 +2,7 @@
 
 add_newline = true
 command_timeout = 200
-format = "[$directory$git_branch$git_status]($style)$line_break$character"
+format = "$hostname[$directory$git_branch$git_status]($style)$line_break$character"
 
 [character]
 error_symbol = "[✗](bold red)"
@@ -10,6 +10,11 @@ success_symbol = "[➜](bold green)"
 
 vimcmd_symbol = '[N](bold blue) '
 vimcmd_visual_symbol = '[V](bold yellow)'
+
+[hostname]
+ssh_only = true
+format = "[$hostname](bold green) "
+disabled = false
 
 [directory]
 truncation_length = 2
