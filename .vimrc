@@ -1,4 +1,5 @@
+let mapleader = " "
 set number
-set autoformat
+set autoident
 set relativenumber
 set showmode
