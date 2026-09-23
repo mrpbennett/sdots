@@ -95,6 +95,9 @@ set_up_mise_and_stow() {
   GOBIN="$HOME/.local/bin" "$MISE_BIN" exec -- go install github.com/joshmedeski/sesh/v2@latest
 
   sudo ln -s "$HOME/.dotfiles/.vimrc" /root/.vimrc
+
+  sudo mkdir -p /root/.config
+  sudo ln -sfn "$HOME/.dotfiles/.config/nvim" /root/.config/nvim
 }
 
 # Clone the Tmux Plugin Manager (TPM) and install its declared plugins.
