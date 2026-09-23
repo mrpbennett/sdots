@@ -1,10 +1,19 @@
--- Options are automatically loaded before lazy.nvim startup
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
+-- Options are automatically loaded before lazy.nvim startup.
+require("config.remote_clipboard").setup()
 
--- Enabling the mouse
 vim.opt.mouse = "a"
--- Disable Swap
 vim.opt.swapfile = false
--- Stop auto comments
+vim.opt.autoread = true
+vim.opt.inccommand = "split" -- better search window
+
+-- set terminal to use zsh
+vim.opt.shell = vim.fn.exepath("zsh")
+
+-- stop auto comments
 vim.opt.formatoptions:remove({ "c", "r", "o" })
+
+-- python lazyvim
+vim.g.lazyvim_python_lsp = "ty"
+
+-- disable the option to require prettier config file
+vim.g.lazyvim_prettier_needs_config = false

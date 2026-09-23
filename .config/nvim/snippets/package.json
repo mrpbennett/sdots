@@ -1,0 +1,26 @@
+{
+  "contributes": {
+    "snippets": [
+      {
+        "language": "dockerfile",
+        "path": "./dockerfile.json"
+      },
+      {
+        "language": "python",
+        "path": "./python.json"
+      },
+      {
+        "language": "javascript",
+        "path": "./javascript.json"
+      },
+      {
+        "language": "sql",
+        "path": "./sql.json"
+      },
+      {
+        "language": "yaml",
+        "path": "./kubernetes.json"
+      }
+    ]
+  }
+}

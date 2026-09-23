@@ -195,5 +195,11 @@ set_up_mise_and_stow
 install_tpm
 install_oh_my_zsh
 install_gum
-install_tailscale
-setup_ssh_public_key
+
+if gum confirm "Set up TailScale?"; then
+  install_tailscale
+fi
+
+if gum confirm "Set up SSH?"; then
+  setup_ssh_public_key
+fi
