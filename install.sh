@@ -3,7 +3,7 @@ set -euo pipefail
 
 target="${1:-}"
 if [[ -z $target ]]; then
-  if ! ( : </dev/tty ) 2>/dev/null; then
+  if ! (: </dev/tty) 2>/dev/null; then
     echo "Usage: bash install.sh {vm|lxc} (or curl ... | bash -s -- vm|lxc)" >&2
     exit 1
   fi
@@ -11,9 +11,12 @@ if [[ -z $target ]]; then
 fi
 
 case "$target" in
-  vm | v) script=install/vm.sh ;;
-  lxc | l) script=install/lxc/install.sh ;;
-  *) echo "Choose vm or lxc." >&2; exit 1 ;;
+vm | v) script=install/vm.sh ;;
+lxc | l) script=install/lxc/install.sh ;;
+*)
+  echo "Choose vm or lxc." >&2
+  exit 1
+  ;;
 esac
 
 # Use the local scripts in a checkout; stdin (curl | bash) has no script path.
