@@ -12,8 +12,8 @@ fi
 
 # A downloaded script has no adjacent files; fetch only the two LXC configs.
 if [[ -f ${BASH_SOURCE[0]:-} ]] &&
-   [[ -f $(dirname -- "${BASH_SOURCE[0]}")/.zshrc ]] &&
-   [[ -f $(dirname -- "${BASH_SOURCE[0]}")/mise/config.toml ]]; then
+  [[ -f $(dirname -- "${BASH_SOURCE[0]}")/.zshrc ]] &&
+  [[ -f $(dirname -- "${BASH_SOURCE[0]}")/mise/config.toml ]]; then
   config_dir=$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")
 else
   config_dir=$(mktemp -d)
@@ -21,6 +21,7 @@ else
   curl -fsSL https://raw.githubusercontent.com/mrpbennett/sdots/main/install/lxc/.zshrc -o "$config_dir/.zshrc"
   mkdir -p "$config_dir/mise"
   curl -fsSL https://raw.githubusercontent.com/mrpbennett/sdots/main/install/lxc/mise/config.toml -o "$config_dir/mise/config.toml"
+  curl -fsSL https://raw.githubusercontent.com/mrpbennett/sdots/main/install/lxc/starship.toml -o "$config_dir/starship.toml"
 fi
 
 mkdir -p "$HOME/.config/mise"
