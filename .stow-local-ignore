@@ -1,4 +1,5 @@
 ^/install\.sh$
+^/install$
 ^/README\.md$
 ^/CHANGELOG\.md$
 ^/LICENSE$

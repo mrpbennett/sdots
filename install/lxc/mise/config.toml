@@ -1,0 +1,9 @@
+[tools]
+neovim = "latest"
+python = "latest"
+yazi = "latest"
+eza = "latest"
+gh = "latest"
+bat = "latest"
+fzf = "latest"
+lazygit = "latest"

@@ -33,6 +33,15 @@ Everything in the box is declared in `~/.config/mise/config.toml` and kept curre
 curl -fsSL https://raw.githubusercontent.com/mrpbennett/sdots/main/install.sh | bash
 ```
 
+Choose `vm` for the full dotfiles setup (including Stow, Docker, Tailscale/SSH prompts),
+or `lxc` for a small mise toolset and a standalone Zsh config with no Stow links.
+For a non-interactive install, pass the target explicitly:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mrpbennett/sdots/main/install.sh | bash -s -- vm
+# or: curl -fsSL https://raw.githubusercontent.com/mrpbennett/sdots/main/install.sh | bash -s -- lxc
+```
+
 Log out and back in after installation before using Docker without `sudo`.
 
 ## Stow maintenance
@@ -45,7 +54,7 @@ All symlinks are managed with `--no-folding` so stow creates real directories an
 | `stow --no-folding --simulate --dir "$DOTFILES_DIR" --target "$HOME" .` | Dry run — preview what would change without touching the filesystem |
 | `stow --delete --dir "$DOTFILES_DIR" --target "$HOME" .`                | Remove all managed symlinks (leaves real files untouched)           |
 
-`$DOTFILES_DIR` is wherever you cloned the repo — typically `~/.local/share/sdots`.
+`$DOTFILES_DIR` is wherever you cloned the repo, or `~/.dotfiles` for a curl-based VM install.
 
 ## Tmux keybindings
 

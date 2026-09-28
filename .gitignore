@@ -6,3 +6,6 @@
 !.config/herdr/config.toml
 
 /.config/gh/hosts.yml
+
+# installer tests
+**/__pycache__/
