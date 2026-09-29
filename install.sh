@@ -1,30 +1,208 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-target="${1:-}"
-if [[ -z $target ]]; then
-  if ! (: </dev/tty) 2>/dev/null; then
-    echo "Usage: bash install.sh {vm|lxc} (or curl ... | bash -s -- vm|lxc)" >&2
+TAILSCALE_AUTH_KEY=""
+SSH_KEY=""
+
+# Directory where the dotfiles repo will (or already does) live.
+# Also acts as fallback when the script is run outside a git checkout.
+REPO_DIR="$HOME/.dotfiles"
+
+cat <<'EOF'
+
+________  ________  ________  _________  ________
+|\   ____\|\   ___ \|\   __  \|\___   ___\\   ____\
+\ \  \___|\ \  \_|\ \ \  \|\  \|___ \  \_\ \  \___|_
+ \ \_____  \ \  \ \\ \ \  \\\  \   \ \  \ \ \_____  \
+  \|____|\  \ \  \_\\ \ \  \\\  \   \ \  \ \|____|\  \
+    ____\_\  \ \_______\ \_______\   \ \__\  ____\_\  \
+   |\_________\|_______|\|_______|    \|__| |\_________\
+   \|_________|                             \|_________|
+
+EOF
+
+# Resolve the dotfiles directory: prefer the repo beside this script, fall back
+# to REPO_DIR, and clone from GitHub if neither exists yet.
+DOTFILES_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$REPO_DIR}")" 2>/dev/null && pwd || true)
+
+if [[ ! -d $DOTFILES_DIR/.git ]]; then
+  DOTFILES_DIR=$REPO_DIR
+  [[ -d $DOTFILES_DIR/.git ]] || git clone --depth 1 https://github.com/mrpbennett/sdots.git "$DOTFILES_DIR"
+fi
+
+# Refresh package index before installing anything.
+install_apt_packages() {
+
+  sudo apt-get update
+
+  echo "✓ Installing apt packages..."
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    build-essential curl git stow nginx zsh
+
+  # Setup automatic security upgrades
+  if [ -f /etc/debian_version ]; then
+    sudo apt install -y unattended-upgrades
+    sudo dpkg-reconfigure -f noninteractive unattended-upgrades
+  fi
+}
+
+# Install Docker from the distro package manager, then enable the daemon and
+# add the current user to the docker group.
+install_docker() {
+  local target_user
+  if command -v docker &>/dev/null && systemctl cat docker.service &>/dev/null; then
+    :
+  elif [ -f /etc/arch-release ]; then
+    sudo pacman -S --needed --noconfirm docker
+  elif [ -f /etc/debian_version ]; then
+    sudo apt-get update
+    sudo apt-get install -y docker.io docker-compose-v2
+  elif [ -f /etc/fedora-release ]; then
+    sudo dnf install -y moby-engine
+  else
+    echo "Error: This OS is not supported by the installer."
+    echo "Install Docker manually, then run this installer again."
     exit 1
   fi
-  read -r -p "Install for a (v)M or (l)XC? " target </dev/tty
-fi
 
-case "$target" in
-vm | v) script=install/vm.sh ;;
-lxc | l) script=install/lxc/install.sh ;;
-*)
-  echo "Choose vm or lxc." >&2
-  exit 1
-  ;;
-esac
+  echo "Enabling Docker..."
+  sudo systemctl enable --now docker.service
+  sudo groupadd -f docker
+  target_user="${SUDO_USER:-${USER:-$(id -un)}}"
+  sudo usermod -aG docker "$target_user"
 
-# Use the local scripts in a checkout; stdin (curl | bash) has no script path.
-if [[ -f ${BASH_SOURCE[0]:-} ]]; then
-  repo_dir=$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")
-  if [[ -f "$repo_dir/$script" ]]; then
-    exec bash "$repo_dir/$script"
+  echo
+  echo "✓ Docker"
+}
+
+# Install mise (version manager), symlink config files with GNU Stow, then
+# install all tools listed in ~/.config/mise/config.toml.
+set_up_mise_and_stow() {
+
+  echo "✓ Installing mise package manager..."
+  MISE_BIN=$(command -v mise || true)
+  if [[ -z $MISE_BIN ]]; then
+    curl -fsSL https://mise.run | sh
+    MISE_BIN="$HOME/.local/bin/mise"
   fi
+
+  echo "✓ Running Stow for symlinks..."
+  stow --no-folding --restow --dir "$DOTFILES_DIR" --target "$HOME" .
+
+  echo "✓ Installing packages via mise..."
+  "$MISE_BIN" trust -y "$HOME/.config/mise/config.toml"
+  "$MISE_BIN" install -y
+  GOBIN="$HOME/.local/bin" "$MISE_BIN" exec -- go install github.com/joshmedeski/sesh/v2@latest
+
+  sudo ln -s "$HOME/.dotfiles/.vimrc" /root/.vimrc
+
+  sudo mkdir -p /root/.config
+  sudo ln -sfn "$HOME/.dotfiles/.config/nvim" /root/.config/nvim
+}
+
+# Clone the Tmux Plugin Manager (TPM) and install its declared plugins.
+install_tpm() {
+  echo "✓ Installing TPM..."
+  TPM_DIR="$HOME/.tmux/plugins/tpm"
+  [[ -d $TPM_DIR ]] || git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+  "$MISE_BIN" exec -- "$TPM_DIR/bin/install_plugins"
+}
+
+# Clone Oh My Zsh and its autosuggestions/syntax-highlighting plugins, then
+# set zsh as the default shell for the current user.
+install_oh_my_zsh() {
+
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    git clone --depth 1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+  fi
+
+  # Install oh-my-zsh plugins
+  ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+  [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] || git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+  [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] || git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+
+  sudo chsh -s "$(which zsh)" "$(id -un)"
+}
+
+install_gum() {
+  sudo mkdir -p /etc/apt/keyrings
+  curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+  sudo apt update && sudo apt install gum
+}
+
+install_tailscale() {
+  echo "✓ Installing TailScale..."
+  local tailscale_auth_key="$TAILSCALE_AUTH_KEY"
+
+  curl -fsSL https://tailscale.com/install.sh | sh
+  sudo systemctl enable --now tailscaled
+
+  echo "Grab a new auth key from the 'generate install script' block on:"
+  echo "https://login.tailscale.com/admin/machines/new-linux"
+  echo
+
+  if [[ -z $tailscale_auth_key ]]; then
+    if ! tailscale_auth_key="$(gum input \
+      --placeholder "tskey-auth-kMyk..." \
+      --prompt "TailScale auth key:")"; then
+      return 1
+    fi
+  fi
+
+  sudo tailscale up --auth-key=$tailscale_auth_key
+  sudo tailscale set --operator=$USER
+}
+
+install_ssh_key() {
+  local ssh_key="$1"
+
+  [[ -n $ssh_key ]] || return 0
+
+  mkdir -p "$HOME/.ssh" || return 1
+  chmod 700 "$HOME/.ssh" || return 1
+  touch "$HOME/.ssh/authorized_keys" || return 1
+  chmod 600 "$HOME/.ssh/authorized_keys" || return 1
+
+  if grep -qxF "$ssh_key" "$HOME/.ssh/authorized_keys"; then
+    return
+  else
+    echo "$ssh_key" >>"$HOME/.ssh/authorized_keys" || return 1
+  fi
+}
+
+setup_ssh_public_key() {
+  local ssh_key="$SSH_KEY"
+
+  if [[ -z $ssh_key ]]; then
+    if ! ssh_key="$(gum input \
+      --placeholder "ssh-ed25519 AAAAC3..." \
+      --prompt "SSH key:")"; then
+      return 1
+    fi
+  fi
+
+  [[ -n $ssh_key ]] || {
+    return
+  }
+
+  install_ssh_key "$ssh_key" || return 1
+
+  echo "✓ SSH"
+  echo
+}
+
+install_apt_packages
+install_docker
+set_up_mise_and_stow
+install_tpm
+install_oh_my_zsh
+install_gum
+
+if gum confirm "Set up TailScale?"; then
+  install_tailscale
 fi
 
-curl -fsSL "https://raw.githubusercontent.com/mrpbennett/sdots/main/$script" | bash
+if gum confirm "Set up SSH?"; then
+  setup_ssh_public_key
+fi
