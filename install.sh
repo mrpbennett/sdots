@@ -94,7 +94,7 @@ set_up_mise_and_stow() {
   "$MISE_BIN" install -y
   GOBIN="$HOME/.local/bin" "$MISE_BIN" exec -- go install github.com/joshmedeski/sesh/v2@latest
 
-  sudo ln -s "$HOME/.dotfiles/.vimrc" /root/.vimrc
+  sudo ln -sfn "$HOME/.dotfiles/.vimrc" /root/.vimrc
 
   sudo mkdir -p /root/.config
   sudo ln -sfn "$HOME/.dotfiles/.config/nvim" /root/.config/nvim
@@ -126,9 +126,9 @@ install_oh_my_zsh() {
 
 install_gum() {
   sudo mkdir -p /etc/apt/keyrings
-  curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+  curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/charm.gpg
   echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
-  sudo apt update && sudo apt install gum
+  sudo apt-get update && sudo apt-get install -y gum
 }
 
 install_tailscale() {
@@ -145,7 +145,7 @@ install_tailscale() {
   if [[ -z $tailscale_auth_key ]]; then
     if ! tailscale_auth_key="$(gum input \
       --placeholder "tskey-auth-kMyk..." \
-      --prompt "TailScale auth key:")"; then
+      --prompt "TailScale auth key:" </dev/tty)"; then
       return 1
     fi
   fi
@@ -177,7 +177,7 @@ setup_ssh_public_key() {
   if [[ -z $ssh_key ]]; then
     if ! ssh_key="$(gum input \
       --placeholder "ssh-ed25519 AAAAC3..." \
-      --prompt "SSH key:")"; then
+      --prompt "SSH key:" </dev/tty)"; then
       return 1
     fi
   fi
@@ -199,10 +199,10 @@ install_tpm
 install_oh_my_zsh
 install_gum
 
-if gum confirm "Set up TailScale?"; then
+if gum confirm "Set up TailScale?" </dev/tty; then
   install_tailscale
 fi
 
-if gum confirm "Set up SSH?"; then
+if gum confirm "Set up SSH?" </dev/tty; then
   setup_ssh_public_key
 fi
