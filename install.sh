@@ -37,7 +37,7 @@ install_apt_packages() {
 
   echo "✓ Installing apt packages..."
   sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    build-essential curl git stow nginx zsh
+    build-essential curl git stow zsh
 
   # Setup automatic security upgrades
   if [ -f /etc/debian_version ]; then
