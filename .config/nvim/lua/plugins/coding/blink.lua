@@ -1,30 +1,19 @@
--- https://github.com/saghen/blink.cmp
-return {
-  {
-    "saghen/blink.cmp",
-    dependencies = { "rafamadriz/friendly-snippets" },
+-- AUTO COMPLETE
+vim.pack.add({ 'https://github.com/saghen/blink.lib', 'https://github.com/saghen/blink.cmp' })
 
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
-
-    opts = {
-      keymap = {
-        preset = "super-tab",
-      },
-      appearance = {
-        nerd_font_variant = "mono",
-      },
-      completion = {
-        menu = {
-          draw = {
-            columns = {
-              { "kind_icon" },
-              { "label", "label_description", gap = 1 },
-              { "kind" },
-            },
-          },
-        },
-      },
-    },
+local cmp = require('blink.cmp')
+cmp.build():pwait()
+cmp.setup({
+  keymap = { preset = 'super-tab' },
+  appearance = {
+    nerd_font_variant = 'mono'
   },
-}
+  completion = {
+    documentation = { auto_show = true }
+  },
+  -- friendly-snippets
+  snippets = { preset = 'default' },
+  sources = {
+    default = { 'lsp', 'path', 'snippets', 'buffer' },
+  },
+})

@@ -1,22 +1,15 @@
-return {
-  {
-    "stevearc/oil.nvim",
-    ---@module 'oil'
-    ---@type oil.SetupOpts
-    opts = {
-      default_file_explorer = false,
-      columns = {
-        "icon",
-      },
-      delete_to_trash = true,
-      view_options = { show_hidden = true },
-      lsp_file_methods = {
-        autosave_changes = true,
-      },
-      watch_for_changes = true,
-    },
-    -- Optional dependencies
-    dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-    lazy = false,
-  },
-}
+vim.pack.add({
+  'https://github.com/stevearc/oil.nvim',
+})
+
+require("oil").setup({
+  delete_to_trash = true,
+  watch_for_changes = true,
+  view_options = {
+    show_hidden = true
+  }
+})
+
+local map = vim.keymap.set
+
+map("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
