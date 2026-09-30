@@ -92,7 +92,6 @@ set_up_mise_and_stow() {
   echo "✓ Installing packages via mise..."
   "$MISE_BIN" trust -y "$HOME/.config/mise/config.toml"
   "$MISE_BIN" install -y
-  GOBIN="$HOME/.local/bin" "$MISE_BIN" exec -- go install github.com/joshmedeski/sesh/v2@latest
 
   sudo ln -sfn "$HOME/.dotfiles/.vimrc" /root/.vimrc
 
