@@ -17,8 +17,12 @@ neovim = "latest"
 ripgrep = "latest"
 starship = "latest"
 tmux = "latest"
+tree-sitter = "latest"
 worktrunk = "latest"
 yazi = "latest"
 yq = "latest"
 xh = "latest"
 zoxide = "latest"
+
+# langs
+rust = "latest"

@@ -5,11 +5,7 @@ vim.pack.add {
 
 local ensure_installed = {
   "bash",
-  "c",
   "diff",
-  "go",
-  "html",
-  "javascript",
   "jsdoc",
   "json",
   "lua",
@@ -21,10 +17,7 @@ local ensure_installed = {
   "python",
   "query",
   "regex",
-  "sql",
   "toml",
-  "tsx",
-  "typescript",
   "vim",
   "vimdoc",
   "xml",
@@ -44,7 +37,7 @@ vim.api.nvim_create_autocmd("FileType", {
 require('nvim-treesitter-textobjects').setup({
   move = {
     enable = true,
-    set_jumps = true,     -- whether to set jumps in the jumplist
+    set_jumps = true, -- whether to set jumps in the jumplist
     keys = {
       goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer", ["]a"] = "@parameter.inner" },
       goto_next_end = { ["]F"] = "@function.outer", ["]C"] = "@class.outer", ["]A"] = "@parameter.inner" },
