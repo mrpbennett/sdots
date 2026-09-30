@@ -151,6 +151,7 @@ install_tailscale() {
 
   sudo tailscale up --auth-key=$tailscale_auth_key
   sudo tailscale set --operator=$USER
+  sudo tailscale set --ssh
 }
 
 install_ssh_key() {
