@@ -5,6 +5,7 @@ case $- in
 esac
 
 export ZSH="$HOME/.oh-my-zsh"
+export SUDO_EDITOR="nvim"
 
 plugins=(
   git

@@ -95,8 +95,10 @@ set_up_mise_and_stow() {
 
   sudo ln -sfn "$HOME/.dotfiles/.vimrc" /root/.vimrc
 
+  # setup nvim for root
   sudo mkdir -p /root/.config
   sudo ln -sfn "$HOME/.dotfiles/.config/nvim" /root/.config/nvim
+  sudo ln -sfn "$(which nvim)" /usr/local/bin/nvim
 }
 
 # Clone the Tmux Plugin Manager (TPM) and install its declared plugins.
