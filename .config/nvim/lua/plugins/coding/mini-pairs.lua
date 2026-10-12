@@ -1,9 +1,11 @@
-vim.pack.add({
-  { src = 'https://github.com/nvim-mini/mini.pairs', version = 'stable' },
-})
-
-require('mini.pairs').setup({
-  mappings = {
-    ['"'] = false,
-  }
-})
+-- https://github.com/nvim-mini/mini.pairs
+return {
+  {
+    "nvim-mini/mini.pairs",
+    opts = {
+      mappings = {
+        ['"'] = false,
+      },
+    },
+  },
+}
