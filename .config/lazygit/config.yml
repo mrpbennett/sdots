@@ -1,3 +1,7 @@
+git:
+  diffRenderers:
+    - colorArg: always
+      command: hunk pager --mode split --line-numbers
 os:
   edit: "nvim {{filename}}"
   editInTerminal: true

@@ -31,8 +31,11 @@ zle -N zle-line-init
 # VIM MODE END ---
 
 source "$HOME/.config/shell/all.sh"
+source "$HOME/homeops.sh"
 
 # uncomment if want to use tmux only
 # if [[ -z $TMUX ]]; then
 #   t
 # fi
+
+export PATH="$HOME/.local/bin:$PATH"

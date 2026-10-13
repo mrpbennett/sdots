@@ -26,3 +26,16 @@ zoxide = "latest"
 
 # langs
 rust = "latest"
+
+# extras
+node = "latest"
+python = "latest"
+kubectl = "latest"
+loki-logcli = "latest"
+talosctl = "latest"
+argocd = "latest"
+claude = "latest"
+k9s = "latest"
+go = "latest"
+terraform = "latest"
+

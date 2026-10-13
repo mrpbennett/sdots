@@ -57,6 +57,8 @@ alias d="docker"
 alias lzg='lazygit'
 alias lzd='lazydocker'
 
+alias k="kubectl"
+
 function y() {
   local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
   yazi "$@" --cwd-file="$tmp"
