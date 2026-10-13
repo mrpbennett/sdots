@@ -38,4 +38,6 @@ claude = "latest"
 k9s = "latest"
 go = "latest"
 terraform = "latest"
-
+pipx = "latest"
+yamlfmt = "latest"
+yamllint = "latest"
