@@ -1,0 +1,59 @@
+resource-events:
+  shortCut: Shift-E
+  description: Events for this resource
+  scopes:
+    - all
+  command: bash
+  background: false
+  confirm: false
+  args:
+    - -c
+    - |
+      kind="$RESOURCE_NAME${RESOURCE_GROUP:+.$RESOURCE_GROUP}"
+      ns=(-A); [ -n "$NAMESPACE" ] && ns=(-n "$NAMESPACE")
+      kubectl --context "$CONTEXT" events "${ns[@]}" --for "$kind/$NAME" 2>&1 | less -S -R
+copy-clean-yaml:
+  shortCut: Ctrl-Y
+  description: Copy clean YAML to clipboard
+  scopes:
+    - all
+  command: bash
+  background: true
+  confirm: false
+  args:
+    - -c
+    - |
+      kind="$RESOURCE_NAME${RESOURCE_GROUP:+.$RESOURCE_GROUP}"
+      ns=(); [ -n "$NAMESPACE" ] && ns=(-n "$NAMESPACE")
+      kubectl --context "$CONTEXT" get "$kind" "$NAME" "${ns[@]}" -o yaml \
+        | yq 'del(.metadata.managedFields, .metadata.uid, .metadata.resourceVersion,
+                  .metadata.generation, .metadata.creationTimestamp, .status,
+                  .metadata.annotations."kubectl.kubernetes.io/last-applied-configuration")
+              | del(.metadata.annotations | select(length == 0))' \
+        | wl-copy
+open-ingress:
+  shortCut: Shift-B
+  description: Open in browser
+  scopes:
+    - ingresses
+  command: bash
+  background: true
+  confirm: false
+  args:
+    - -c
+    - |
+      host=$(kubectl --context "$CONTEXT" get ingress -n "$NAMESPACE" "$NAME" -o jsonpath='{.spec.rules[0].host}')
+      [ -n "$host" ] && xdg-open "https://$host"
+open-httproute:
+  shortCut: Shift-B
+  description: Open in browser
+  scopes:
+    - httproutes
+  command: bash
+  background: true
+  confirm: false
+  args:
+    - -c
+    - |
+      host=$(kubectl --context "$CONTEXT" get httproutes.gateway.networking.k8s.io -n "$NAMESPACE" "$NAME" -o jsonpath='{.spec.hostnames[0]}')
+      [ -n "$host" ] && xdg-open "https://$host"

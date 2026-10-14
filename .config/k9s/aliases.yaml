@@ -1,0 +1,12 @@
+aliases:
+  dp: deployments
+  po: pods
+  sec: v1/secrets
+  jo: jobs
+  cr: clusterroles
+  crb: clusterrolebindings
+  ro: roles
+  rb: rolebindings
+  np: networkpolicies
+  apps: argoproj.io/v1alpha1/applications argocd
+  crash: "v1/pods all /crash|backoff|error|pending|oom|failed|evicted|terminating|creating|init:"

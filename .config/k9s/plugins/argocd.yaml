@@ -1,0 +1,41 @@
+# Uses the Application CRD directly, so no `argocd login` is needed.
+argocd-refresh:
+  shortCut: Shift-R
+  description: Argo hard refresh
+  scopes:
+    - applications
+  command: kubectl
+  background: true
+  confirm: false
+  args:
+    - --context
+    - $CONTEXT
+    - annotate
+    - applications.argoproj.io
+    - -n
+    - $NAMESPACE
+    - $NAME
+    - argocd.argoproj.io/refresh=hard
+    - --overwrite
+
+argocd-sync:
+  shortCut: Shift-Z
+  description: Argo sync
+  scopes:
+    - applications
+  command: kubectl
+  background: true
+  confirm: true
+  dangerous: true
+  args:
+    - --context
+    - $CONTEXT
+    - patch
+    - applications.argoproj.io
+    - -n
+    - $NAMESPACE
+    - $NAME
+    - --type
+    - merge
+    - -p
+    - '{"operation":{"initiatedBy":{"username":"k9s"},"sync":{"syncStrategy":{"hook":{}}}}}'

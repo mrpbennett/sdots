@@ -1,0 +1,26 @@
+unhealthy-pods:
+  shortCut: Shift-X
+  description: Unhealthy pods (all namespaces)
+  scopes:
+    - pods
+  command: bash
+  background: false
+  confirm: false
+  args:
+    - -c
+    - |
+      kubectl --context "$CONTEXT" get pods -A -o json \
+        | jq -r '
+            ["NAMESPACE","POD","PHASE","REASON","READY","RESTARTS"],
+            (.items[]
+              | select(.status.phase != "Succeeded")
+              | (.status.containerStatuses // []) as $cs
+              | select(.status.phase != "Running" or any($cs[]; .ready | not))
+              | [ .metadata.namespace,
+                  .metadata.name,
+                  .status.phase,
+                  ([$cs[] | .state.waiting.reason // .state.terminated.reason // empty] | first // .status.reason // "-"),
+                  "\([$cs[] | select(.ready)] | length)/\($cs | length)",
+                  ([$cs[].restartCount] | add // 0 | tostring) ])
+            | @tsv' \
+        | column -t -s $'\t' | less -S -R

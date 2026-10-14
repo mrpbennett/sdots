@@ -1,0 +1,56 @@
+# Talos node tooling. Assumes the talosctl context has the same name as the kube context.
+talos-dashboard:
+  shortCut: Shift-T
+  description: Talos dashboard
+  scopes:
+    - nodes
+  command: bash
+  background: false
+  confirm: false
+  args:
+    - -c
+    - |
+      ip=$(kubectl --context "$CONTEXT" get node "$NAME" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+      talosctl --context "$CONTEXT" -n "$ip" dashboard
+
+talos-service-logs:
+  shortCut: Shift-L
+  description: Talos service logs
+  scopes:
+    - nodes
+  command: bash
+  background: false
+  confirm: false
+  inputs:
+    - name: service
+      label: Service
+      type: dropdown
+      required: true
+      default: kubelet
+      options:
+        - kubelet
+        - etcd
+        - containerd
+        - cri
+        - apid
+        - machined
+        - trustd
+  args:
+    - -c
+    - |
+      ip=$(kubectl --context "$CONTEXT" get node "$NAME" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+      talosctl --context "$CONTEXT" -n "$ip" logs "$INPUT_SERVICE" --tail 500 | less -R +G
+
+talos-dmesg:
+  shortCut: Shift-K
+  description: Talos kernel log
+  scopes:
+    - nodes
+  command: bash
+  background: false
+  confirm: false
+  args:
+    - -c
+    - |
+      ip=$(kubectl --context "$CONTEXT" get node "$NAME" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+      talosctl --context "$CONTEXT" -n "$ip" dmesg | less -R +G

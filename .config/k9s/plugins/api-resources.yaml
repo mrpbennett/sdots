@@ -1,0 +1,11 @@
+api-resources:
+  shortCut: Shift-V
+  description: API resources (list verbs, wide)
+  scopes:
+    - all
+  command: bash
+  background: false
+  confirm: false
+  args:
+    - -c
+    - kubectl --context "$CONTEXT" api-resources --verbs=list -o wide | less -S -R
