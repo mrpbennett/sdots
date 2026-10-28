@@ -1,5 +1,4 @@
 [tools]
-age = "latest"
 ansible = "latest"
 atuin = "latest"
 bat = "latest"
@@ -36,8 +35,9 @@ yq = "latest"
 zoxide = "latest"
 
 # langs
-java = "25"
+java = "latest"
 lua = "latest"
+node = "latest"
 rust = "latest"
 
 # extras
@@ -56,11 +56,9 @@ kubectx = "latest"
 kubens = "latest"
 kubie = "latest"
 loki-logcli = "latest"
-node = "latest"
 opencode = "latest"
 pi = "latest"
 pipx = "latest"
-popeye = "latest"
 python = "latest"
 talosctl = "latest"
 terraform = "latest"
